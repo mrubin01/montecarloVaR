@@ -63,6 +63,20 @@ build CMakeFiles/montecarloVaR.dir/Equity.cpp.o: CXX_COMPILER__montecarloVaR_uns
   OBJECT_DIR = CMakeFiles/montecarloVaR.dir
   OBJECT_FILE_DIR = CMakeFiles/montecarloVaR.dir
 
+build CMakeFiles/montecarloVaR.dir/functions.cpp.o: CXX_COMPILER__montecarloVaR_unscanned_Debug /Users/madararubino/CLionProjects/montecarloVaR/functions.cpp || cmake_object_order_depends_target_montecarloVaR
+  DEP_FILE = CMakeFiles/montecarloVaR.dir/functions.cpp.o.d
+  FLAGS = -g -std=gnu++20 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  INCLUDES = -isystem /Users/madararubino/anaconda3/envs/env-trading/lib/python3.8/site-packages/pybind11/include -isystem /Users/madararubino/anaconda3/envs/env-trading/include/python3.8
+  OBJECT_DIR = CMakeFiles/montecarloVaR.dir
+  OBJECT_FILE_DIR = CMakeFiles/montecarloVaR.dir
+
+build CMakeFiles/montecarloVaR.dir/Portfolio.cpp.o: CXX_COMPILER__montecarloVaR_unscanned_Debug /Users/madararubino/CLionProjects/montecarloVaR/Portfolio.cpp || cmake_object_order_depends_target_montecarloVaR
+  DEP_FILE = CMakeFiles/montecarloVaR.dir/Portfolio.cpp.o.d
+  FLAGS = -g -std=gnu++20 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  INCLUDES = -isystem /Users/madararubino/anaconda3/envs/env-trading/lib/python3.8/site-packages/pybind11/include -isystem /Users/madararubino/anaconda3/envs/env-trading/include/python3.8
+  OBJECT_DIR = CMakeFiles/montecarloVaR.dir
+  OBJECT_FILE_DIR = CMakeFiles/montecarloVaR.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target montecarloVaR
@@ -71,7 +85,7 @@ build CMakeFiles/montecarloVaR.dir/Equity.cpp.o: CXX_COMPILER__montecarloVaR_uns
 #############################################
 # Link the executable montecarloVaR
 
-build montecarloVaR: CXX_EXECUTABLE_LINKER__montecarloVaR_Debug CMakeFiles/montecarloVaR.dir/main.cpp.o CMakeFiles/montecarloVaR.dir/Equity.cpp.o | /Users/madararubino/anaconda3/envs/env-trading/lib/libpython3.8.dylib
+build montecarloVaR: CXX_EXECUTABLE_LINKER__montecarloVaR_Debug CMakeFiles/montecarloVaR.dir/main.cpp.o CMakeFiles/montecarloVaR.dir/Equity.cpp.o CMakeFiles/montecarloVaR.dir/functions.cpp.o CMakeFiles/montecarloVaR.dir/Portfolio.cpp.o | /Users/madararubino/anaconda3/envs/env-trading/lib/libpython3.8.dylib
   FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
   LINK_LIBRARIES = -Wl,-rpath,/Users/madararubino/anaconda3/envs/env-trading/lib  /Users/madararubino/anaconda3/envs/env-trading/lib/libpython3.8.dylib
   OBJECT_DIR = CMakeFiles/montecarloVaR.dir

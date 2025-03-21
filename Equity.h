@@ -6,20 +6,26 @@ class Equity
 private:
     std::string_view s_ticker{};
     std::uint16_t i_share_number{};
-    std::float_t f_value{};
     std::float_t f_price{};
 public:
-    Equity() = default; // is an explicitly default constructor useful?
+    Equity() = default; // is an explicit default constructor useful?
 
     Equity(std::string_view ticker,
         std::uint16_t share_number,
-        std::float_t value,
         std::float_t price);
 
-    std::string_view getTicker() const {return s_ticker;}
-    std::uint16_t getShareNumber() const {return i_share_number;}
-    std::float_t getValue() const {return f_value;}
-    std::float_t getPrice() const {return f_price;}
+    // getters
+    std::string_view getTicker() const;
+    std::uint16_t getShareNumber() const;
+    std::float_t getPrice() const;
+
+    // setters
+    void setTicker(const std::string_view& ticker);
+    void setShareNumber(const std::uint16_t& share_number);
+    void setPrice(const std::float_t& price);
+
+    // get the overall value of the shares
+    std::float_t getSharesValue() const;
 
 };
 

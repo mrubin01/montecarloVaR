@@ -12,7 +12,13 @@ find_package(pybind11 REQUIRED)
 add_executable(montecarloVaR main.cpp
         Asset.h
         Equity.h
-        Equity.cpp)
+        Equity.cpp
+        functions.h
+        functions.cpp
+        Random.h
+        Portfolio.h
+        Portfolio.cpp
+)
 
 # Link against Python3 and pybind11
 target_link_libraries(montecarloVaR PRIVATE pybind11::embed Python3::Python)
