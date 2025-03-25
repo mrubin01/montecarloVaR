@@ -3,8 +3,6 @@
 #include "Portfolio.h"
 #include <iomanip>
 
-#include <iomanip>
-
 Portfolio::Portfolio(std::initializer_list<Equity> equity_list)
     : v_equities{equity_list}
 {
