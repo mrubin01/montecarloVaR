@@ -8,6 +8,7 @@ set(pybind11_DIR "/Users/madararubino/anaconda3/envs/env-trading/lib/python3.8/s
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module Development.Embed)
 find_package(pybind11 REQUIRED)
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_executable(montecarloVaR main.cpp
         Asset.h
@@ -18,6 +19,8 @@ add_executable(montecarloVaR main.cpp
         Random.h
         Portfolio.h
         Portfolio.cpp
+        MultiEquityPortfolio.h
+        MultiEquityPortfolio.cpp
 )
 
 # Link against Python3 and pybind11

@@ -22,7 +22,7 @@ void Portfolio::removeEquity(const std::string& ticker)
     std::cout << "--- Equity " << ticker << " removed from the portfolio!" << '\n';
 }
 
-std::float_t Portfolio::getPortfolioValue() const
+std::float_t& Portfolio::getPortfolioValue() const
 {
     std::float_t total = 0.0f;
     for (const auto& equity : v_equities)

@@ -16,7 +16,7 @@ public:
 
     // getters
     // get the overall value of the portfolio
-    std::float_t getPortfolioValue() const;
+    std::float_t& getPortfolioValue() const;
     // get the assets in the portfolio
     std::vector<Equity>& getEquities();
     // get the number of items in the portfolio
@@ -28,7 +28,6 @@ public:
 
     // remove an equity
     void removeEquity(const std::string& ticker);
-
 
     // print portfolio item names
     void printPortfolio() const;
