@@ -22,7 +22,7 @@ namespace Global
     // number of montecarlo simulations to run: a low number of simulations (<= 10) is not advisable
     constexpr std::int16_t SIMULATIONS { 1000 };
     // days to forecast
-    constexpr std::int16_t TRADING_DAYS { 21 };
+    constexpr std::int16_t TRADING_DAYS { 5 };
     // Ito's lemma: used in the Geometric Brownian Motion and the Stochastic Calculus
     constexpr std::float_t ITO { 0.5 };
     // SHARES is the number of shares, S0 is the last price: error if constexpr is used
@@ -186,16 +186,11 @@ int main() {
             last_prices(col) = last;
         }
 
-        MultiEquityPortfolio newPortfolio(logReturnsMatrix, last_prices, Global::TICKERS_SHARES);
-        // FROM HERE
+        MultiEquityPortfolio newPortfolio(logReturnsMatrix, last_prices, Global::TICKERS, Global::TICKERS_SHARES);
 
-        // Create the annualized covariance matrix
-        // do not multiply the mean * 252, otherwise the numbers will be wrong
-        Eigen::VectorXd meanVector = logReturnsMatrix.colwise().mean();
-        Eigen::RowVectorXd meanRow = meanVector.transpose();
-        const Eigen::MatrixXd centered = logReturnsMatrix.rowwise() - meanRow;
-        const Eigen::MatrixXd covarianceMatrix = (centered.adjoint() * centered) / static_cast<double>(logReturnsMatrix.rows() - 1);
-        const Eigen::MatrixXd annualizedCovarianceMatrix = covarianceMatrix * 252;
+        // a vector with the mean values and a covariance matrix
+        const Eigen::VectorXd meanVector = newPortfolio.getMean();
+        const Eigen::MatrixXd annualizedCovarianceMatrix = newPortfolio.getReturnCovarianceMatrix();
 
         //std::cout << "Mean of each stock:\n" << meanVector << '\n';
         //std::cout << "Covariance Matrix:\n" << annualizedCovarianceMatrix << "\n\n";
@@ -208,10 +203,8 @@ int main() {
             return 1;
         }
 
-        Eigen::MatrixXd L = llt.matrixL();  // Lower triangular matrix
-
-        // Output results
-        //std::cout << "Cholesky Decomposition (L):\n" << L << "\n\n";
+        // Lower triangular matrix of the Cholesky decomposition matrixx
+        Eigen::MatrixXd L = llt.matrixL();
 
         // Create a random number generator with normal distribution
         std::random_device rd;
@@ -221,20 +214,7 @@ int main() {
         // Create a 3D tensor (TRADING_DAYS, num_tickers, SIMULATIONS) to hold the random values
         Eigen::Tensor<double, 3> rand_normals(Global::TRADING_DAYS, Global::TICKERS.size(), Global::SIMULATIONS);
 
-        // Fill the tensor with random normal values: replaced by the following code
-        // for (int i = 0; i < Global::TRADING_DAYS; i++)
-        // {
-        //     for (int j = 0; j < Global::TICKERS.size(); j++)
-        //     {
-        //         for (int k = 0; k < Global::SIMULATIONS; k++)
-        //         {
-        //             rand_normals(i, j, k) = d(gen);  // Generate random value
-        //         }
-        //     }
-        //
-        // }
-
-        // This code replaces the previous code to avoid zeros
+        // This code is used to avoid that random values are not zero
         for (int i = 0; i < Global::TRADING_DAYS; i++) {
             for (int j = 0; j < Global::TICKERS.size(); j++) {
                 for (int k = 0; k < Global::SIMULATIONS; k++) {
@@ -292,18 +272,21 @@ int main() {
         //std::cout << correlated_shocks.dimensions() << '\n';
 
         // This code is used only to check zeros in the tensors, then it can be deleted
-        std::uint16_t zeros;
-        for (int i = 0; i < 21; i++) {
-            for (int j = 0; j < 3; j++) {
-                for (int k = 0; k < 1000; k++) {
-                    if (correlated_shocks(i, j, k) == 0.0f)
-                    {
-                        zeros += 1;
-                    }
-                }
-            }
-        }
-        std::cout << zeros << '\n';
+        // std::uint16_t zeros;
+        // for (int i = 0; i < 21; i++)
+        // {
+        //     for (int j = 0; j < 3; j++)
+        //     {
+        //         for (int k = 0; k < 1000; k++)
+        //         {
+        //             if (correlated_shocks(i, j, k) == 0.0f)
+        //             {
+        //                 zeros += 1;
+        //             }
+        //         }
+        //     }
+        // }
+        // std::cout << zeros << '\n';
 
         // SO FAR rand_normals AND correlated_shocks HAVE NO ZERO VALUES AND BOTH SHAPE [21, 3, 1000]
 
@@ -344,26 +327,26 @@ int main() {
         }
 
         // Print a sample value for verification: index1 is the trading days, index2 is the equity, index3 is the simulation
-        std::cout << "Simulated price at T=21, Asset=0, Simulation=0: " << simulated_prices(21, 1, 0) << std::endl;
+        // std::cout << "Simulated price at T=21, Asset=0, Simulation=0: " << simulated_prices(21, 1, 0) << std::endl;
 
         // This is value of the portfolio before the simulations
         double portfolio_initial_value {last_prices[0] * Global::TICKERS_SHARES[0]
             + last_prices[1] * Global::TICKERS_SHARES[1] + last_prices[2] * Global::TICKERS_SHARES[2]};
 
-        std::cout << "Portfolio value before the simulations: " << portfolio_initial_value << '\n';
+        std::cout << '\n' << "Portfolio value before the simulations: $" << portfolio_initial_value << "\n\n";
 
-        // Extract the last simulation (index 21, shape (3,1000))
+        // Extract the last simulation
         Eigen::MatrixXd last_simulation(Global::TICKERS.size(), Global::SIMULATIONS);
         for (int i = 0; i < Global::TICKERS.size(); i++)
         {
             for (int j = 0; j < Global::SIMULATIONS; ++j)
             {
-                last_simulation(i, j) = simulated_prices(21, i, j);
+                last_simulation(i, j) = simulated_prices(Global::TRADING_DAYS, i, j);
             }
         }
 
 
-        // Convert the vector TICKERS_SHARES into an Eigen vector of double
+        // Convert the vector TICKERS_SHARES into an Eigen vector of doubles
         Eigen::VectorXd number_of_shares(3);
         for (size_t i = 0; i < Global::TICKERS_SHARES.size(); i++)
         {
@@ -374,11 +357,11 @@ int main() {
         // Perform a multiplication matrix-vector: (1000x3) * (3x1) = (1000x1)
         Eigen::VectorXd final_values = last_simulation_transposed * number_of_shares;
 
+
         // Print part of the result
         // std::cout << "Result (first 5 elements):\n" << final_values.head(5) << "\n...\n";
 
         // Compute profit/loss distribution
-        // Eigen::VectorXd losses = final_values - portfolio_initial_value;
         Eigen::VectorXd losses = (Eigen::VectorXd::Constant(final_values.size(), portfolio_initial_value) - final_values).matrix();
 
 
@@ -389,27 +372,46 @@ int main() {
         std::sort(values.begin(), values.end());
 
         // Compute the index for the 5th percentile (VaR_95)
-        size_t index95 = static_cast<size_t>(std::round(0.05 * (values.size() - 1)));  // 5th percentile index
+        auto index95 = static_cast<size_t>(std::round(0.05 * (values.size() - 1)));  // 5th percentile index
 
         // Extract the 5th percentile value
         double VaR_95 = values[index95];
         double VaR_95_perc {VaR_95 / portfolio_initial_value * 100.0f};
 
-        std::cout << "Value at Risk (confidence level 95%): " << VaR_95 << std::endl;
-        std::cout << "Value at Risk % : " << VaR_95_perc << std::endl;
+        // Calculate the Expected Shortfall beyond the confidence level 95%
+        double es_sum_95 { 0.0 };
+        double indexes_es { 0.0 };
+        for (size_t i = 0; i < (index95 - 1); i++) {
+            indexes_es += 1;
+            es_sum_95 += values[i];  // sum values beyond index95
+        }
+        double es_mean_95 = es_sum_95 / indexes_es;
 
+        std::cout << "Value at Risk after " << Global::TRADING_DAYS <<  " days (confidence level 95%): " << VaR_95 << '\n';
+        std::cout << "Value at Risk % : " << std::setprecision(3) << VaR_95_perc << '\n';
+        std::cout << std::setprecision(6) << std::defaultfloat; // this resets the precision for the following value
+        std::cout << "Expected Shortfall (ES) beyond 95% : " << es_mean_95 << std::endl;
 
         // Compute the index for the 1st percentile
-        size_t index99 = static_cast<size_t>(std::round(0.01 * (values.size() - 1)));  // 1st percentile index
+        auto index99 = static_cast<size_t>(std::round(0.01 * (values.size() - 1)));  // 1st percentile index
 
         // Extract the 1st percentile value
         double VaR_99 = values[index99];
         double VaR_99_perc {VaR_99 / portfolio_initial_value * 100.0f};
 
-        std::cout << "=======================================" << std::endl;
-        std::cout << "Value at Risk (confidence level 99%): " << VaR_99 << std::endl;
-        std::cout << "Value at Risk % : " << VaR_99_perc << std::endl;
+        // Calculate the Expected Shortfall beyond the confidence level 99%
+        double es_sum_99 { 0.0 };
+        for (size_t i = 0; i < (index95 - 1); i++) {
+            indexes_es += 1;
+            es_sum_99 += values[i];  // sum values beyond index95
+        }
+        double es_mean_99 = es_sum_99 / indexes_es;
 
+        std::cout << "\n=======================================\n" << std::endl;
+        std::cout << "Value at Risk after " << Global::TRADING_DAYS <<  " days (confidence level 99%): " << VaR_99 << std::endl;
+        std::cout << "Value at Risk % : " << std::setprecision(3) << VaR_99_perc << std::endl;
+        std::cout << std::setprecision(6) << std::defaultfloat; // this resets the precision for the following value
+        std::cout << "Expected Shortfall (ES) beyond 99% : " << es_mean_99 << std::endl;
 
 
     }
