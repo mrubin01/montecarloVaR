@@ -10,7 +10,7 @@ private:
     std::float_t f_mu{};
     std::float_t f_sigma{};
 public:
-    Equity() = default; // is an explicit default constructor useful?
+    Equity() = default;
 
     Equity(std::string ticker,
         std::uint16_t share_number,

@@ -22,7 +22,7 @@ void Portfolio::removeEquity(const std::string& ticker)
     std::cout << "--- Equity " << ticker << " removed from the portfolio!" << '\n';
 }
 
-std::float_t& Portfolio::getPortfolioValue() const
+std::float_t Portfolio::getPortfolioValue() const
 {
     std::float_t total = 0.0f;
     for (const auto& equity : v_equities)
@@ -30,10 +30,7 @@ std::float_t& Portfolio::getPortfolioValue() const
         total += equity.getSharesValue();
     }
 
-    // Ensure fixed-point notation (no scientific notation)
-    // std::cout << std::fixed << std::setprecision(2);
     return total;
-    // std::cout << "=== Overall Portfolio value: $" << total << '\n';
 }
 
 std::vector<Equity>& Portfolio::getEquities()

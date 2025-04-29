@@ -18,7 +18,6 @@
 
 namespace Global
 {
-    namespace py = pybind11;
     // number of montecarlo simulations to run: a low number of simulations (<= 10) is not advisable
     constexpr std::int16_t SIMULATIONS { 1000 };
     // days to forecast
@@ -36,17 +35,12 @@ namespace Global
     const std::vector<std::string> TICKERS = {"AAPL", "CIM", "CVX"};
     const std::vector<std::uint16_t> TICKERS_SHARES = {10, 15, 20};
 
-    const std::vector<std::string> PATH_LIST = {"/Users/madararubino/yfinance_data/AAPL.csv",
-    "/Users/madararubino/yfinance_data/CIM.csv", "/Users/madararubino/yfinance_data/CVX.csv"};
-
-    // std::string PATH1 = "/Users/madararubino/yfinance_data/AAPL.csv";
-    // std::string PATH2 = "/Users/madararubino/yfinance_data/CIM.csv";
-    // std::string PATH3 = "/Users/madararubino/yfinance_data/CVX.csv";
-
+    const std::vector<std::string> PATH_LIST = {"AAPL.csv", "CIM.csv", "CVX.csv"};
 
 }
 
-int main() {
+int main()
+{
 
     if (Global::TICKERS.size() == 1)
     {
@@ -288,7 +282,7 @@ int main() {
         // }
         // std::cout << zeros << '\n';
 
-        // SO FAR rand_normals AND correlated_shocks HAVE NO ZERO VALUES AND BOTH SHAPE [21, 3, 1000]
+        // SO FAR rand_normals AND correlated_shocks HAVE NO ZERO VALUES AND BOTH SHAPE [TRADING_DAYS, TICKERS, SIMULATIONS]
 
         // Simulate price paths using GBM
         // Initialize a 3D tensor and set the prices to zero (22 x 3 x 1000)
@@ -304,8 +298,6 @@ int main() {
             }
         }
 
-        // Print first asset's first simulation starting price (for verification)
-        // std::cout << "First simulated price for asset 0: " << simulated_prices(0, 1, 0) << std::endl;
 
         // These constant variables will be used to calculate the simulated prices
         const Eigen::VectorXd covDiagonal = annualizedCovarianceMatrix.diagonal();
@@ -380,12 +372,12 @@ int main() {
 
         // Calculate the Expected Shortfall beyond the confidence level 95%
         double es_sum_95 { 0.0 };
-        double indexes_es { 0.0 };
+        double indexes_es_95 { 0.0 };
         for (size_t i = 0; i < (index95 - 1); i++) {
-            indexes_es += 1;
+            indexes_es_95 += 1;
             es_sum_95 += values[i];  // sum values beyond index95
         }
-        double es_mean_95 = es_sum_95 / indexes_es;
+        double es_mean_95 = es_sum_95 / indexes_es_95;
 
         std::cout << "Value at Risk after " << Global::TRADING_DAYS <<  " days (confidence level 95%): " << VaR_95 << '\n';
         std::cout << "Value at Risk % : " << std::setprecision(3) << VaR_95_perc << '\n';
@@ -401,11 +393,12 @@ int main() {
 
         // Calculate the Expected Shortfall beyond the confidence level 99%
         double es_sum_99 { 0.0 };
-        for (size_t i = 0; i < (index95 - 1); i++) {
-            indexes_es += 1;
+        double indexes_es_99 { 0.0 };
+        for (size_t i = 0; i < (index99 - 1); i++) {
+            indexes_es_99 += 1;
             es_sum_99 += values[i];  // sum values beyond index95
         }
-        double es_mean_99 = es_sum_99 / indexes_es;
+        double es_mean_99 = es_sum_99 / indexes_es_99;
 
         std::cout << "\n=======================================\n" << std::endl;
         std::cout << "Value at Risk after " << Global::TRADING_DAYS <<  " days (confidence level 99%): " << VaR_99 << std::endl;
