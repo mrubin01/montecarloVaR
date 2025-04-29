@@ -265,23 +265,6 @@ int main()
         //std::cout << "First correlated shock 2: " << correlated_shocks(20, 2, 999) << std::endl;
         //std::cout << correlated_shocks.dimensions() << '\n';
 
-        // This code is used only to check zeros in the tensors, then it can be deleted
-        // std::uint16_t zeros;
-        // for (int i = 0; i < 21; i++)
-        // {
-        //     for (int j = 0; j < 3; j++)
-        //     {
-        //         for (int k = 0; k < 1000; k++)
-        //         {
-        //             if (correlated_shocks(i, j, k) == 0.0f)
-        //             {
-        //                 zeros += 1;
-        //             }
-        //         }
-        //     }
-        // }
-        // std::cout << zeros << '\n';
-
         // SO FAR rand_normals AND correlated_shocks HAVE NO ZERO VALUES AND BOTH SHAPE [TRADING_DAYS, TICKERS, SIMULATIONS]
 
         // Simulate price paths using GBM
@@ -297,7 +280,6 @@ int main()
                 simulated_prices(0, j, s) = last_prices(j);
             }
         }
-
 
         // These constant variables will be used to calculate the simulated prices
         const Eigen::VectorXd covDiagonal = annualizedCovarianceMatrix.diagonal();
@@ -336,7 +318,6 @@ int main()
                 last_simulation(i, j) = simulated_prices(Global::TRADING_DAYS, i, j);
             }
         }
-
 
         // Convert the vector TICKERS_SHARES into an Eigen vector of doubles
         Eigen::VectorXd number_of_shares(3);
@@ -405,8 +386,6 @@ int main()
         std::cout << "Value at Risk % : " << std::setprecision(3) << VaR_99_perc << std::endl;
         std::cout << std::setprecision(6) << std::defaultfloat; // this resets the precision for the following value
         std::cout << "Expected Shortfall (ES) beyond 99% : " << es_mean_99 << std::endl;
-
-
     }
 
     return 0;

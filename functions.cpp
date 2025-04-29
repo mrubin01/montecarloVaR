@@ -2,7 +2,6 @@
 #include "Equity.h"
 #include <iostream>
 #include <vector>
-#include <tuple>
 #include <fstream>
 #include <sstream>
 #include </usr/local/Cellar/eigen/3.4.0_1/include/eigen3/Eigen/Dense>

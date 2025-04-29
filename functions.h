@@ -16,6 +16,4 @@ std::pair<std::vector<double>, std::vector<double>> readLogReturns(const std::st
 
 // THIS FUNCTION IS NOT USED ANYMORE
 // import data from yfinance for multiple tickers
-//std::tuple<std::vector<std::float_t>, std::vector<std::vector<double>> > importMultipleTickers(const std::vector<std::string>& ticker_list, const std::vector<std::uint16_t>& share_no_list);
-//std::tuple<std::vector<std::float_t>, std::vector<std::vector<double>>> importMultipleTickers(const std::vector<std::string>& ticker_list, const std::vector<std::uint16_t>& share_no_list);
 std::float_t importMultipleTickers(const std::vector<std::string>& ticker_list, const std::vector<std::uint16_t>& share_no_list);
